@@ -25,6 +25,13 @@ app.use(router)
 
 app.use(errorMiddleware)
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', `${process.env.CLIENT_URL}`);
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Credentials', true);
+    next();
+  });
+
 const start = async () => {
     try{
         await mongoose.connect(process.env.DB_URL, {
