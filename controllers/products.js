@@ -10,6 +10,8 @@ const getProducts = async (req, res) => {
     const rarity = req.query.rarity || [1, 2, 3, 4, 5, 6];
 
     let skinWear;
+    let category;
+    let popular;
 
     if (req.query.skinWear !== undefined) {
         skinWear = req.query.skinWear
@@ -17,7 +19,19 @@ const getProducts = async (req, res) => {
         skinWear = ['Factory new', 'Field-tested', 'Minimal wear', 'Well-worn']
     }
 
-    const query = {'rang': { $in: rarity }, 'tag': { $in: skinWear }} 
+    if (req.query.type !== undefined) {
+        category = req.query.type
+    } else {
+        category = ['Knive', 'Glove', 'Pistol', 'SMG', 'Rifle', 'Shotgun', 'machine-gun', 'key']
+    }
+
+    if (req.query.popular !== undefined) {
+        popular = req.query.popular
+    } else {
+        popular = [true, false]
+    }
+    
+    const query = {'rang': { $in: rarity }, 'tag': { $in: skinWear }, 'category': { $in: category }, 'isPopular': {$in: popular}} 
     const products = await Product.find(query).sort(sortValue[sort]);
     res.send(products)
 }
@@ -39,12 +53,12 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
-        const { seo_title, seo_description, name, slug, price, description, rang, type, tag, date_create, img, isPopular } = req.body
+        const { seo_title, seo_description, name, slug, price, description, rang, type, category, tag, date_create, img, isPopular } = req.body
         const candidate = await Product.findOne({name})
         if (!candidate) {
             return res.status(404).json({message: 'Product not found'})
         }
-        await Product.updateOne(candidate, {seo_title, seo_description, name, slug, price, description, rang, type, tag, date_create, img, isPopular})
+        await Product.updateOne(candidate, {seo_title, seo_description, name, slug, price, description, rang, type, category, tag, date_create, img, isPopular})
         return res.json({status: 'ok'})
     } catch(e) {
         console.log(e)
@@ -72,9 +86,7 @@ const getProductById = async (req, res) => {
         if (!prodyct) {
             return res.status(404).json({message: 'Product not fount'})
         }
-
         return res.json(prodyct)
-        // const product 
     } catch (e) {
         console.log(e)
     }

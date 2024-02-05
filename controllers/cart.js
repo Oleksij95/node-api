@@ -34,6 +34,19 @@ class Cart {
             next(e)
         }
     }
+
+    async setCart(req, res, next) {
+        try {
+            const { refreshToken } = req.cookies;
+            const products = req.body;
+            const cartData = await cartService.setCart(refreshToken,  products)
+            res.json(cartData)
+        } catch(e) {
+            next(e)
+        }
+    }
+
+    
 }
 
 module.exports = new Cart()

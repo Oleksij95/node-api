@@ -13,7 +13,7 @@ class CartService {
         
         if (!user) {
             throw ApiError.BadRequest('User not found')
-        }
+        }   
 
         const cart = await CartModel.findOne({user: user._id})
 
@@ -66,16 +66,13 @@ class CartService {
         })
 
         const productDto = new ProductDto(product)
-        
-        if (existingItem && existingItem !== undefined) {
-            existingItem.quantity += quantity;
-        } else {
+
+        if (!existingItem || existingItem === undefined) {
             cart.items.push({ product: productDto, quantity });
+            cart.totalCount += quantity
+            cart.totalPrice += productDto.price
         }
-
-        cart.totalCount += quantity
-        cart.totalPrice += productDto.price
-
+        
         await cart.save();
 
         return {
@@ -137,6 +134,48 @@ class CartService {
         return {
             cart
         }
+    }
+
+    async setCart(refreshToken, products) {
+
+        const userData = tokenService.validateRefreshToken(refreshToken)
+        const tokenFromDb = await tokenService.findToken(refreshToken)
+
+        if (!userData || !tokenFromDb) {
+            throw ApiError.UnauthorizedError()
+        }
+
+        const user = await UserModel.findById(userData.id)
+
+        let cart = await CartModel.findOne({user: user.id})
+
+        if (!cart || cart === null) {
+            cart = await CartModel.create({ user: user.id, items: [] })
+        }
+
+        for (let i = 0; i < products.length; i++) {
+                        
+            const product = await ProductModel.findById(products[i].product.id)
+
+            if (!product) {
+                throw ApiError.NotFound(`Product ${productId} not found`)
+            }
+
+            const productDto = new ProductDto(product)
+
+            const existingItem = cart.items.find(itemP => {
+                return itemP.product.id === products[i].product.id
+            })
+
+            if (existingItem === undefined) {
+                cart.items.push({ product: productDto, quantity: 1 });
+                cart.totalPrice += productDto.price
+            }
+        }
+
+        await cart.save();
+    
+        return cart
     }
     
 }

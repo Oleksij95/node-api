@@ -8,6 +8,8 @@ cartRouter.get('/', authMiddleware, cart.getCart)
 
 cartRouter.post('/', authMiddleware, cart.addToCart)
 
+cartRouter.post('/setCart', authMiddleware, cart.setCart)
+
 cartRouter.delete('/:productId', authMiddleware, cart.removeFromCart)
 
 

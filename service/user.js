@@ -8,6 +8,7 @@ const ApiError = require('../exceptions/api-error')
 
 
 class UserService { 
+
     async registration(email, password, steam, first_name, last_name ) {
         const candidate = await UserModel.findOne({email})
         if (candidate) {
@@ -18,7 +19,6 @@ class UserService {
         const user = await UserModel.create({email, password: hashPassword, steam, first_name, last_name, activationLink})
 
         await mailService.sendActivationMail(email, `${process.env.API_URL}/auth/activate/${activationLink}`)
-
 
         const userDto = new UserDto(user)
         const tokens = tokenService.generateTokens({...userDto})
@@ -101,6 +101,38 @@ class UserService {
         const userDto = new UserDto(updatedUser);
         return {
             user: userDto
+        }
+    }
+
+    async forgot(email) {
+        const user = await UserModel.findOne({email: email})
+        if (!user) {
+            throw ApiError.NotFound('User not found')
+        }
+        const forgotLink = uuid.v4()
+
+        await UserModel.updateOne(user, {forgotLink})
+
+        await mailService.sendForgotmail(email, `${process.env.CLIENT_URL}/auth/forgot/${forgotLink}`)
+        return {
+            user
+        }
+    }
+
+    async setNewPassword(newPassword, token) {
+
+        const user = await UserModel.findOne({forgotLink: token})
+
+        if (!user) {
+            throw ApiError.NotFound('User not found')
+        }
+
+        const hashPassword = await bcrypt.hash(newPassword, 7)
+
+        await UserModel.updateOne(user, {password: hashPassword, forgotLink: ''})
+
+        return {
+            user
         }
     }
 }

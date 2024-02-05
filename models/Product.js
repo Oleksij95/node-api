@@ -9,6 +9,7 @@ const Product = new Schema({
     description: { type: String },
     rang: { type: Number, require: true, min: 1, max: 6, default: 1},
     type: { type: String, require: true },
+    category: { type: String},
     tag: { type: String, require: true },
     img: { type: String, require: true, default: 'default.img' },
     isPopular: { type: Boolean, default: false },

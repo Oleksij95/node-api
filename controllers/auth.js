@@ -56,7 +56,28 @@ class Auth {
         try {
             const activationLink = req.params.link
             await userService.activate(activationLink)
-            return res.redirect(process.env.CLIENT_YRL)
+            return res.redirect(process.env.CLIENT_URL)
+        } catch(e) {
+            next(e)
+        }
+    }
+
+    async forgot(req, res, next) {
+        try {
+            const { email } = req.body
+            const forgotData = await userService.forgot(email)
+            return res.json(forgotData) 
+        } catch(e) {
+            next(e)
+        }
+    }
+
+    async setNewPassword(req, res, next){
+        try {
+            const { token } = req.params;
+            const { newPassword } = req.body
+            const forgotData = await userService.setNewPassword(newPassword, token)
+            return res.json(forgotData) 
         } catch(e) {
             next(e)
         }

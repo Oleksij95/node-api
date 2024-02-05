@@ -17,6 +17,10 @@ router.get('/activate/:link', auth.activate)
 
 router.get('/refresh', auth.refresh)
 
+router.post('/forgot', auth.forgot)
+
+router.post('/forgot/:token', auth.setNewPassword)
+
 router.put('/user', authMiddleware, auth.getUser)
 
 
