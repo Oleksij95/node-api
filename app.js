@@ -13,24 +13,28 @@ const app = express()
 
 const PORT = process.env.PORT || 5050
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', `${process.env.CLIENT_URL}`);
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Access-Control-Allow-Credentials', true);
+    next();
+});
+
 
 app.use(cors({
     credentials: true,
     origin: [process.env.CLIENT_URL, 'http://localhost:3000']
 }))
+
 app.use(express.json())
+
 app.use(cookieParser())
 
 app.use(router)
 
 app.use(errorMiddleware)
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', `${process.env.CLIENT_URL}`);
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    res.header('Access-Control-Allow-Credentials', true);
-    next();
-  });
+
 
 const start = async () => {
     try{
