@@ -19,6 +19,8 @@ router.post('/forgot', auth.forgot)
 
 router.post('/forgot/:token', auth.setNewPassword)
 
+router.post('/forgot/check/:token', auth.checkForgotLink)
+
 router.put('/user', authMiddleware, auth.getUser)
 
 

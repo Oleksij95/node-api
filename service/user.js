@@ -124,6 +124,18 @@ class UserService {
             user
         }
     }
+
+    async checkForgotLink(token) {
+        const user = await UserModel.findOne({forgotLink: token})
+
+        if (!user) {
+            throw ApiError.NotFound('User not found')
+        }
+
+        return {
+            user
+        }
+    }
 }
 
 module.exports = new UserService()

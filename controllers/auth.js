@@ -73,6 +73,16 @@ class Auth {
         }
     }
 
+    async checkForgotLink(req, res, next) {
+        try {
+            const { token } = req.params;
+            const forgotData = await userService.checkForgotLink(token)
+            return res.json(forgotData) 
+        } catch(e) {
+            next(e)
+        }
+    }
+
     async getUser(req, res, next) {
         try {
             const {id, email, first_name, last_name} = req.body
