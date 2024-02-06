@@ -13,6 +13,21 @@ const getProducts = async (req, res) => {
     let category;
     let popular;
 
+    let minPrice;
+    let maxPrice;
+
+    if (req.query.min !== undefined) {
+        minPrice = req.query.min
+    } else {
+        minPrice = 0
+    }
+
+    if (req.query.max !== undefined) {
+        maxPrice = req.query.max
+    } else {
+        maxPrice = 99999999
+    }
+
     if (req.query.skinWear !== undefined) {
         skinWear = req.query.skinWear
     } else {
@@ -31,7 +46,7 @@ const getProducts = async (req, res) => {
         popular = [true, false]
     }
     
-    const query = {'rang': { $in: rarity }, 'tag': { $in: skinWear }, 'category': { $in: category }, 'isPopular': {$in: popular}} 
+    const query = {'rang': { $in: rarity }, 'tag': { $in: skinWear }, 'category': { $in: category }, 'isPopular': {$in: popular}, 'price':  { $gte: minPrice, $lte: maxPrice }} 
     const products = await Product.find(query).sort(sortValue[sort]);
     res.send(products)
 }
