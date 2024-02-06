@@ -13,8 +13,6 @@ router.post('/login', auth.login)
 
 router.post('/logout', auth.logout)
 
-router.get('/activate/:link', auth.activate)
-
 router.get('/refresh', auth.refresh)
 
 router.post('/forgot', auth.forgot)

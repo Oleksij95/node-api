@@ -9,8 +9,8 @@ class Auth {
             if (!errors.isEmpty()) {
                 return next(ApiError.BadRequest('Validation Error', errors.array()))
             }
-            const { email, password, steam, first_name, last_name } = req.body
-            const userData = await userService.registration(email, password, steam, first_name, last_name)
+            const { email, password, steam, name, username } = req.body
+            const userData = await userService.registration(email, password, steam, name, username)
             res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "None", secure: true })
             return res.json(userData)
         } catch(e) {
@@ -47,16 +47,6 @@ class Auth {
             const userData = await userService.refresh(refreshToken)
             res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true,  sameSite: "None", secure: true })
             return res.json(userData)
-        } catch(e) {
-            next(e)
-        }
-    }
-
-    async activate(req, res, next) {
-        try {
-            const activationLink = req.params.link
-            await userService.activate(activationLink)
-            return res.redirect(process.env.CLIENT_URL)
         } catch(e) {
             next(e)
         }
