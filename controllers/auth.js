@@ -85,8 +85,8 @@ class Auth {
 
     async getUser(req, res, next) {
         try {
-            const {id, email, name, username, steam} = req.body
-            const users = await userService.updateUser(id, email, name, username, steam)
+            const {id, email, name, username, steam, tradeLink} = req.body
+            const users = await userService.updateUser(id, email, name, username, steam, tradeLink)
             res.json(users)
         } catch(e) {
             next(e)

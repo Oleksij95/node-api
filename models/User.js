@@ -2,6 +2,7 @@ const { Schema, model } = require('mongoose')
 
 const User = new Schema({
     steam: { type: String, required: true },
+    tradeLink: { type: String },
     name: {type: String, required: true},
     username: {type: String, required: true},
     email: {type: String, required: true, unique: true},

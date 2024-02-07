@@ -78,13 +78,13 @@ class UserService {
 
     }
 
-    async updateUser (id, email, name, username, steam) {
+    async updateUser (id, email, name, username, steam, tradeLink) {
         const user = await UserModel.findById(id)
         if (!user) {
             throw ApiError.BadRequest('User not found')
         }
         
-        await UserModel.updateOne(user, {email, name, username, steam})
+        await UserModel.updateOne(user, {email, name, username, steam, tradeLink})
         const updatedUser = await UserModel.findById(id)
 
         const userDto = new UserDto(updatedUser);
