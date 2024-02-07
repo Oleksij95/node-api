@@ -18,12 +18,19 @@ const getProducts = async (req, res) => {
 
     if (req.query.min !== undefined) {
         minPrice = req.query.min
+        if (isNaN(req.query.min)) {
+            minPrice = 0
+        }
+        
     } else {
         minPrice = 0
     }
 
     if (req.query.max !== undefined) {
         maxPrice = req.query.max
+        if (isNaN(req.query.min)) {
+            maxPrice = 99999999
+        }
     } else {
         maxPrice = 99999999
     }
