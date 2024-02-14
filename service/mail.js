@@ -27,6 +27,22 @@ class MailService {
             `
         })
     }
+
+    async sendContactsEmail(to, message) {
+        await this.transporter.sendMail({
+            from: process.env.SMTP_USER,
+            to,
+            subject: 'Contact ' + process.env.API_URL,
+            text: '',
+            html:
+            `
+                <div>
+                    <div>Email: ${to}</div>
+                    <div>Message: ${message}</div>
+                </div>
+            `
+        })
+    }
 }
 
 module.exports = new MailService()
