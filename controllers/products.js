@@ -38,7 +38,7 @@ const getProducts = async (req, res) => {
     if (req.query.skinWear !== undefined) {
         skinWear = req.query.skinWear
     } else {
-        skinWear = ['Factory new', 'Field-tested', 'Minimal wear', 'Well-worn']
+        skinWear = ['Factory new', 'Field-tested', 'Minimal wear', 'Well-worn', 'Battle-scarred']
     }
 
     if (req.query.type !== undefined) {
@@ -60,12 +60,12 @@ const getProducts = async (req, res) => {
 
 const createProduct = async (req, res) => {
     try {
-        const { seo_title, seo_description, name, slug, price, description, rang, type, tag, date_create, img, isPopular } = req.body
+        const { seo_title, seo_description, name, slug, price, description, rang, type, tag, date_create, img, category, isPopular } = req.body
         const candidate = await Product.findOne({name})
         if (candidate) {
             return res.status(400).json({message: 'This product alredy exist'})
         }
-        const product = new Product({seo_title, seo_description, name, slug, price, description, rang, type, tag, date_create, img, isPopular})
+        const product = new Product({seo_title, seo_description, name, slug, price, description, rang, type, tag, date_create, img, category, isPopular})
         await product.save()
         return res.json({status: 'ok'})
     } catch(e) {
