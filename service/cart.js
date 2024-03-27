@@ -39,6 +39,33 @@ class CartService {
         }
     }
 
+    async clearCart (refreshToken) {
+        const userData = tokenService.validateRefreshToken(refreshToken)
+        const tokenFromDb = await tokenService.findToken(refreshToken)
+
+        if (!userData || !tokenFromDb) {
+            throw ApiError.UnauthorizedError()
+        }
+
+        const cart = await CartModel.findOne({user: userData.id})
+
+        if (!cart) {
+            throw ApiError.NotFound('Cart not found')
+        }
+
+        
+        cart.items = []
+
+        cart.totalCount = 0
+        cart.totalPrice = 0
+       
+        await cart.save();
+
+        return {
+            cart
+        }
+    } 
+
     async addToCart(refreshToken, productId, quantity ) {
 
         const userData = tokenService.validateRefreshToken(refreshToken)

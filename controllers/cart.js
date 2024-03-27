@@ -12,6 +12,16 @@ class Cart {
         }
     }
 
+    async clearCart(req, res, next){
+        try {
+            const { refreshToken } = req.cookies;
+            const cartData = await cartService.clearCart(refreshToken)
+            return res.json(cartData)
+        } catch(e) {
+            next(e)
+        }
+    }
+
     async addToCart (req, res, next) {
         try {
             const { refreshToken } = req.cookies;
