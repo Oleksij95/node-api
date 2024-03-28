@@ -2,6 +2,8 @@ const userService = require('../service/user')
 const { validationResult } = require('express-validator')
 const ApiError = require('../exceptions/api-error')
 
+const cookie = require('cookie');
+
 class Auth {
     async registration(req, res, next) {
         try{
@@ -11,7 +13,14 @@ class Auth {
             }
             const { email, password, steam, name, username } = req.body
             const userData = await userService.registration(email, password, steam, name, username)
-            res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "None", secure: true, partitioned: true })
+            res.setHeader('Set-Cookie', cookie.serialize('refreshToken', String(userData.refreshToken), {
+                httpOnly: true,
+                maxAge: 60 * 60 * 24 * 7,
+                sameSite: "None",
+                secure: true,
+                partitioned: true,
+                path: '/'
+              }));
             return res.json(userData)
         } catch(e) {
             next(e)
@@ -23,7 +32,17 @@ class Auth {
         try {
             const { email, password } = req.body
             const userData = await userService.login(email, password )
-            res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "None", secure: true, partitioned: true  })
+
+            res.setHeader('Set-Cookie', cookie.serialize('refreshToken', String(userData.refreshToken), {
+                httpOnly: true,
+                maxAge: 60 * 60 * 24 * 7,
+                sameSite: "None",
+                secure: true,
+                partitioned: true,
+                path: '/'
+              }));
+
+            // res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "None", secure: true, partitioned: true  })
             return res.json(userData)
         } catch(e) {
             next(e)
@@ -34,6 +53,14 @@ class Auth {
         try {
             const {refreshToken} = req.cookies;
             const token = await userService.logout(refreshToken)
+            res.setHeader('Set-Cookie', cookie.serialize('refreshToken', String(''), {
+                httpOnly: true,
+                maxAge: 60 * 60 * 24 * 7,
+                sameSite: "None",
+                secure: true,
+                partitioned: true,
+                path: '/'
+              }));
             res.clearCookie('refreshToken')
             return res.json(token)
         } catch(e) {
@@ -45,7 +72,14 @@ class Auth {
         try {
             const {refreshToken} = req.cookies;
             const userData = await userService.refresh(refreshToken)
-            res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true,  sameSite: "None", secure: true })
+            res.setHeader('Set-Cookie', cookie.serialize('refreshToken', String(userData.refreshToken), {
+                httpOnly: true,
+                maxAge: 60 * 60 * 24 * 7,
+                sameSite: "None",
+                secure: true,
+                partitioned: true,
+                path: '/'
+              }));
             return res.json(userData)
         } catch(e) {
             next(e)
