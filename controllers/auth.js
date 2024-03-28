@@ -11,7 +11,7 @@ class Auth {
             }
             const { email, password, steam, name, username } = req.body
             const userData = await userService.registration(email, password, steam, name, username)
-            res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "None", secure: true })
+            res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "None", secure: true, domain: 'dev---csskinspro-shop-fazyoqlqxa-ew.a.run.app' })
             return res.json(userData)
         } catch(e) {
             next(e)
@@ -23,7 +23,7 @@ class Auth {
         try {
             const { email, password } = req.body
             const userData = await userService.login(email, password )
-            res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "None", secure: true  })
+            res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true, sameSite: "None", secure: true, domain: 'dev---csskinspro-shop-fazyoqlqxa-ew.a.run.app'  })
             return res.json(userData)
         } catch(e) {
             next(e)
